@@ -9,26 +9,25 @@
 </head>
 <body>
 
-<header>
-    <h1>JLPT Vocabulary Mastery</h1>
-    <p>Ôn tập Từ vựng & Kanji thông minh</p>
-    
-    <!-- Bộ chọn Bài Học -->
+<div class="app-layout">
+<aside class="sidebar">
+    <div class="brand"><span class="brand-mark">語</span><div><h1>Vocab Mastery</h1><p>JLPT • Học mỗi ngày</p></div></div>
     <div class="lesson-selector-container">
-        <label for="lesson-select">📖 Bài học:</label>
-        <select id="lesson-select" class="lesson-select" onchange="changeLesson(this.value)">
-            <!-- Danh sách các bài học sẽ tự động điền vào đây -->
-        </select>
+        <label for="lesson-select">BÀI HỌC</label>
+        <select id="lesson-select" class="lesson-select" onchange="changeLesson(this.value)"></select>
     </div>
-</header>
-
-<nav>
-    <button class="nav-btn active" onclick="switchTab('quiz')">1. Làm Trắc Nghiệm</button>
-    <button class="nav-btn" onclick="switchTab('flashcard')">2. Học Flashcard</button>
-    <button class="nav-btn" onclick="switchTab('vocab')">3. Danh Sách Từ</button>
-    <button class="nav-btn" onclick="switchTab('stats')">4. Thống Kê</button>
-</nav>
-
+    <nav aria-label="Điều hướng chính">
+        <span class="nav-label">KHÔNG GIAN HỌC</span>
+        <button class="nav-btn active" onclick="switchTab('quiz', this)"><span class="nav-icon">✎</span><span>Trắc nghiệm</span></button>
+        <button class="nav-btn" onclick="switchTab('flashcard', this)"><span class="nav-icon">▣</span><span>Flashcard</span></button>
+        <button class="nav-btn" onclick="switchTab('vocab', this)"><span class="nav-icon">☷</span><span>Danh sách từ</span></button>
+        <button class="nav-btn" onclick="switchTab('stats', this)"><span class="nav-icon">◷</span><span>Thống kê</span></button>
+    </nav>
+    <div class="sidebar-progress"><span>Tiến độ bài học</span><strong id="sidebar-progress-text">0%</strong><div class="progress-bar-bg"><div class="progress-bar-fill" id="sidebar-progress-bar"></div></div></div>
+    <div class="sidebar-tools"><button onclick="exportProgressJSON()">↓ <span>Xuất tiến độ</span></button><input type="file" id="import-progress-file" accept=".json" hidden onchange="importProgressJSON(event)"><button onclick="document.getElementById('import-progress-file').click()">↑ <span>Nhập tiến độ</span></button></div>
+</aside>
+<main class="main-area">
+<header class="page-header"><div><p class="eyebrow">JLPT VOCABULARY</p><h2 id="page-title">Trắc nghiệm</h2><p>Ôn tập từ vựng và Kanji theo tiến độ của bạn.</p></div><div class="header-chip">✨ Học tập thông minh</div></header>
 <div class="container">
     <!-- TAB 1: TRẮC NGHIỆM -->
     <div id="tab-quiz" class="tab-content active">
@@ -38,9 +37,10 @@
 
     <!-- TAB 2: FLASHCARD -->
     <div id="tab-flashcard" class="tab-content">
-        <div class="card" style="text-align: center; color: var(--text-muted); margin-bottom: 1rem; font-size: 0.95rem;">
+        <div class="card flashcard-tip" style="text-align: center; color: var(--text-muted); margin-bottom: 1rem; font-size: 0.95rem;">
             💡 Phương pháp <b>Active Recall</b>: Nhìn Kanji, tự nhẩm cách đọc & nghĩa rồi bấm vào thẻ để kiểm tra đáp án.
         </div>
+        <div class="flashcard-toolbar"><div class="fc-filter-group"><button class="fc-filter active" onclick="setFlashcardFilter('all', this)">Tất cả <span id="fc-count-all">0</span></button><button class="fc-filter" onclick="setFlashcardFilter('unlearned', this)">Chưa thuộc <span id="fc-count-unlearned">0</span></button><button class="fc-filter" onclick="setFlashcardFilter('learned', this)">Đã thuộc <span id="fc-count-learned">0</span></button></div><span id="fc-position" class="fc-position"></span></div>
         <div class="flashcard" id="flashcard" onclick="this.classList.toggle('flipped')">
             <div class="flashcard-inner">
                 <div class="fc-front">
@@ -58,6 +58,7 @@
             <button class="fc-btn" onclick="prevCard()">← Từ trước</button>
             <button class="fc-btn" onclick="nextCard()">Từ tiếp →</button>
         </div>
+        <div class="fc-status-actions"><span>Trạng thái: <strong id="fc-current-status">Chưa thuộc</strong></span><div><button class="fc-status-btn unlearned" onclick="setCurrentCardLearned(false)">↻ Cần ôn lại</button><button class="fc-status-btn learned" onclick="setCurrentCardLearned(true)">✓ Đã thuộc</button></div></div>
     </div>
 
     <!-- TAB 3: DANH SÁCH TỪ VỰNG -->
@@ -95,15 +96,10 @@
         </div>
     </div>
 </div>
-<!-- Nút Xuất File JSON -->
-<button onclick="exportProgressJSON()" class="btn">💾 Tải về file tiến độ (.json)</button>
-
-<!-- Nút Nhập File JSON -->
-<input type="file" id="import-progress-file" accept=".json" style="display: none;" onchange="importProgressJSON(event)">
-<button onclick="document.getElementById('import-progress-file').click()" class="btn">📂 Nạp tiến độ từ file (.json)</button>
+</div></main></div>
 <!-- Nạp dữ liệu các bài học trước -->
-<script src="lessons/lesson1.js"></script>
-<script src="lessons/lesson2.js"></script>
+<script src="tettei/lesson1.js"></script>
+<script src="tettei/lesson2.js"></script>
 
 <!-- Nạp script xử lý chính -->
 <script src="js/script.js"></script>

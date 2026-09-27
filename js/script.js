@@ -5,6 +5,7 @@ let learnedStatus = [];
 let userAnswers = {};
 let currentCardIndex = 0;
 let showMeaning = true;
+let flashcardFilter = 'all';
 
 // Khởi tạo hệ thống
 function init() {
@@ -56,10 +57,12 @@ function loadLesson(lessonKey) {
     data = window.LESSONS[lessonKey].data;
     userAnswers = {};
     currentCardIndex = 0;
+    flashcardFilter = 'all';
 
     // Đọc trạng thái đã thuộc từ localStorage theo ID bài học riêng biệt
     const saved = localStorage.getItem(`jp_learned_${lessonKey}`);
-    learnedStatus = saved ? JSON.parse(saved) : Array(data.length).fill(false);
+    learnedStatus = saved ? JSON.parse(saved).slice(0, data.length) : [];
+    learnedStatus = Array.from({ length: data.length }, (_, idx) => Boolean(learnedStatus[idx]));
 
     // Cập nhật tiêu đề & giao diện
     document.getElementById('vocab-lesson-title').innerText = `Danh sách từ vựng: ${window.LESSONS[lessonKey].title}`;
@@ -131,23 +134,73 @@ function gradeQuiz() {
 // 2. Flashcard
 function renderFlashcard(idx) {
     if (!data.length) return;
+    const flashcard = document.getElementById('flashcard');
+    const filtered = getFlashcardIndices();
+    if (!filtered.length) {
+        document.getElementById('fc-kanji').innerText = flashcardFilter === 'learned' ? 'Chưa có từ đã thuộc' : 'Đã ôn hết!';
+        document.getElementById('fc-hiragana').innerText = '';
+        document.getElementById('fc-type').innerText = '';
+        document.getElementById('fc-meaning').innerText = '';
+        flashcard.classList.remove('flipped');
+        updateFlashcardSummary();
+        return;
+    }
+    if (!filtered.includes(idx)) idx = filtered[0];
+    currentCardIndex = idx;
     const item = data[idx];
     document.getElementById('fc-kanji').innerText = item.kanji;
     document.getElementById('fc-hiragana').innerText = item.hiragana;
     document.getElementById('fc-type').innerText = item.type;
     document.getElementById('fc-meaning').innerText = item.meaning;
-    document.getElementById('flashcard').classList.remove('flipped');
+    flashcard.classList.remove('flipped');
+    flashcard.classList.toggle('is-learned', Boolean(learnedStatus[idx]));
+    updateFlashcardSummary();
+}
+
+function getFlashcardIndices() {
+    return data.map((_, idx) => idx).filter(idx => flashcardFilter === 'all' || (flashcardFilter === 'learned' ? learnedStatus[idx] : !learnedStatus[idx]));
+}
+
+function updateFlashcardSummary() {
+    const learnedCount = learnedStatus.filter(Boolean).length;
+    const counts = { 'fc-count-all': data.length, 'fc-count-learned': learnedCount, 'fc-count-unlearned': data.length - learnedCount };
+    Object.entries(counts).forEach(([id, value]) => { const el = document.getElementById(id); if (el) el.innerText = value; });
+    const filtered = getFlashcardIndices();
+    const position = document.getElementById('fc-position');
+    if (position) position.innerText = filtered.length ? `${filtered.indexOf(currentCardIndex) + 1} / ${filtered.length} thẻ` : 'Không có thẻ';
+    const status = document.getElementById('fc-current-status');
+    if (status) status.innerText = learnedStatus[currentCardIndex] ? 'Đã thuộc' : 'Chưa thuộc';
+}
+
+function setFlashcardFilter(filter, button) {
+    flashcardFilter = filter;
+    document.querySelectorAll('.fc-filter').forEach(item => item.classList.remove('active'));
+    button.classList.add('active');
+    const filtered = getFlashcardIndices();
+    renderFlashcard(filtered.includes(currentCardIndex) ? currentCardIndex : (filtered[0] ?? 0));
+}
+
+function setCurrentCardLearned(learned) {
+    if (!data.length || !getFlashcardIndices().length) return;
+    if (learnedStatus[currentCardIndex] !== learned) toggleLearned(currentCardIndex);
+    const filtered = getFlashcardIndices();
+    const next = filtered.find(idx => idx > currentCardIndex) ?? filtered[0];
+    renderFlashcard(next);
 }
 
 function nextCard() {
-    if (!data.length) return;
-    currentCardIndex = (currentCardIndex + 1) % data.length;
+    const filtered = getFlashcardIndices();
+    if (!filtered.length) { renderFlashcard(0); return; }
+    const position = filtered.indexOf(currentCardIndex);
+    currentCardIndex = filtered[(position + 1 + filtered.length) % filtered.length];
     renderFlashcard(currentCardIndex);
 }
 
 function prevCard() {
-    if (!data.length) return;
-    currentCardIndex = (currentCardIndex - 1 + data.length) % data.length;
+    const filtered = getFlashcardIndices();
+    if (!filtered.length) { renderFlashcard(0); return; }
+    const position = filtered.indexOf(currentCardIndex);
+    currentCardIndex = filtered[(position - 1 + filtered.length) % filtered.length];
     renderFlashcard(currentCardIndex);
 }
 
@@ -192,6 +245,12 @@ function toggleLearned(idx) {
     renderVocabList();
     updateStats();
     populateLessonSelector(); // Cập nhật lại tiến độ hiển thị ở Dropdown menu
+    updateFlashcardSummary();
+    if (!getFlashcardIndices().includes(currentCardIndex)) {
+        renderFlashcard(getFlashcardIndices()[0] ?? 0);
+    } else {
+        document.getElementById('flashcard').classList.toggle('is-learned', Boolean(learnedStatus[currentCardIndex]));
+    }
 }
 
 // 4. Thống kê
@@ -202,6 +261,8 @@ function updateStats() {
     const percent = data.length ? Math.round((learnedCount / data.length) * 100) : 0;
     document.getElementById('stat-progress').innerText = `${percent}%`;
     document.getElementById('stat-progress-bar').style.width = `${percent}%`;
+    document.getElementById('sidebar-progress-text').innerText = `${percent}%`;
+    document.getElementById('sidebar-progress-bar').style.width = `${percent}%`;
     
     // Nếu chưa bấm Nộp bài trắc nghiệm thì hiển thị --/tổng số câu
     const currentScoreText = document.getElementById('stat-quiz-score').innerText;
@@ -211,14 +272,14 @@ function updateStats() {
     }
 }
 
-function switchTab(tabName) {
+function switchTab(tabName, button) {
     document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
     
     document.getElementById(`tab-${tabName}`).classList.add('active');
-    if (event && event.target) {
-        event.target.classList.add('active');
-    }
+    if (button) button.classList.add('active');
+    const titles = { quiz: 'Trắc nghiệm', flashcard: 'Flashcard', vocab: 'Danh sách từ', stats: 'Thống kê' };
+    document.getElementById('page-title').innerText = titles[tabName] || 'Học tập';
 }
 
 // --- TÍNH NĂNG XUẤT / NHẬP FILE TIẾN ĐỘ (.JSON) ---
