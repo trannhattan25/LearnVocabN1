@@ -1,5 +1,5 @@
 {
-  "lesson1": [
+  "tettei/lesson1": [
     true,
     true,
     true,
@@ -7,10 +7,10 @@
     true,
     true,
     true,
-    false,
-    false,
-    false,
-    false,
+    true,
+    true,
+    true,
+    true,
     false
   ]
 }
