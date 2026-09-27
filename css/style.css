@@ -509,3 +509,21 @@ nav button.nav-btn.active { color: #4f46e5; background: #eef2ff; border: 0; }
 header.page-header { background: #fff; color: var(--text); text-align: left; padding-top: 2rem; box-shadow: none; }
 header.page-header h2 { font-size: 1.65rem; font-weight: 700; }
 header.page-header p { opacity: 1; }
+
+/* Thông báo chấm điểm */
+body.modal-open { overflow: hidden; }
+.quiz-modal[hidden] { display: none; }
+.quiz-modal { position: fixed; inset: 0; z-index: 1000; display: grid; place-items: center; padding: 1.25rem; background: rgba(15, 23, 42, .56); backdrop-filter: blur(5px); animation: modalFadeIn .22s ease both; }
+.quiz-modal-card { position: relative; width: min(100%, 430px); padding: 2.25rem 2rem 1.8rem; border: 1px solid rgba(255,255,255,.75); border-radius: 24px; background: #fff; box-shadow: 0 24px 80px rgba(15,23,42,.24); text-align: center; animation: modalPopIn .32s cubic-bezier(.2,.85,.25,1.15) both; }
+.quiz-modal-close { position: absolute; top: .85rem; right: .9rem; width: 36px; height: 36px; border: 0; border-radius: 50%; background: #f1f5f9; color: #64748b; font-size: 1.4rem; cursor: pointer; }
+.quiz-modal-close:hover { background: #e2e8f0; color: #0f172a; }
+.quiz-modal-icon { display: grid; place-items: center; width: 62px; height: 62px; margin: 0 auto 1rem; border-radius: 20px; background: linear-gradient(145deg,#dcfce7,#d1fae5); color: #059669; font-size: 2rem; font-weight: 800; box-shadow: 0 8px 24px rgba(16,185,129,.16); }
+.quiz-modal-eyebrow { color: #6366f1; font-size: .68rem; font-weight: 800; letter-spacing: .14em; }
+.quiz-modal-card h2 { margin-top: .35rem; color: #0f172a; font-size: 1.65rem; letter-spacing: -.04em; }
+.quiz-modal-score { display: inline-block; margin: .9rem 0 .65rem; padding: .45rem .85rem; border-radius: 99px; background: #eef2ff; color: #4338ca; font-size: .9rem; font-weight: 800; }
+.quiz-modal-message { max-width: 320px; margin: 0 auto 1.35rem; color: #64748b; font-size: .9rem; line-height: 1.65; }
+.quiz-modal-action { display: flex; justify-content: center; align-items: center; gap: .55rem; width: 100%; padding: .9rem 1rem; border: 0; border-radius: 12px; background: var(--primary-gradient); color: white; font-size: .9rem; font-weight: 800; cursor: pointer; box-shadow: 0 8px 18px rgba(79,70,229,.24); transition: transform .2s ease, box-shadow .2s ease; }
+.quiz-modal-action:hover { transform: translateY(-2px); box-shadow: 0 12px 24px rgba(79,70,229,.3); }
+@keyframes modalFadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes modalPopIn { from { opacity: 0; transform: translateY(16px) scale(.94); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@media (prefers-reduced-motion: reduce) { .quiz-modal,.quiz-modal-card { animation: none; } }

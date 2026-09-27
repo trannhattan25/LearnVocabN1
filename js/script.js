@@ -137,8 +137,32 @@ function gradeQuiz() {
     });
 
     document.getElementById('stat-quiz-score').innerText = `${score}/${data.length}`;
-    alert(`Bạn đã đạt ${score}/${data.length} điểm! Hãy kéo xuống xem dịch nghĩa và giải thích chi tiết.`);
+    openQuizSummary(score);
 }
+
+function openQuizSummary(score) {
+    const modal = document.getElementById('quiz-summary-modal');
+    const percent = data.length ? Math.round((score / data.length) * 100) : 0;
+    document.getElementById('quiz-modal-score').innerText = `Bạn đạt ${score}/${data.length} câu đúng (${percent}%).`;
+    document.getElementById('quiz-modal-title').innerText = percent === 100 ? 'Xuất sắc!' : percent >= 70 ? 'Làm tốt lắm!' : 'Cùng ôn lại nhé!';
+    modal.hidden = false;
+    document.body.classList.add('modal-open');
+    modal.querySelector('.quiz-modal-action').focus();
+}
+
+function closeQuizSummary(scrollToResults = false) {
+    const modal = document.getElementById('quiz-summary-modal');
+    modal.hidden = true;
+    document.body.classList.remove('modal-open');
+    if (scrollToResults) {
+        const firstResult = data.length ? document.getElementById(`q-card-${data[0].id}`) : null;
+        firstResult?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
+
+document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && !document.getElementById('quiz-summary-modal')?.hidden) closeQuizSummary();
+});
 
 // 2. Flashcard
 function renderFlashcard(idx) {
