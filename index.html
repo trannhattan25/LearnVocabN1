@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luyện Thi JLPT - Từ Vựng & Kanji</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+    <h1>JLPT Vocabulary Mastery</h1>
+    <p>Ôn tập Từ vựng & Kanji thông minh</p>
+    
+    <!-- Bộ chọn Bài Học -->
+    <div class="lesson-selector-container">
+        <label for="lesson-select">📖 Bài học:</label>
+        <select id="lesson-select" class="lesson-select" onchange="changeLesson(this.value)">
+            <!-- Danh sách các bài học sẽ tự động điền vào đây -->
+        </select>
+    </div>
+</header>
+
+<nav>
+    <button class="nav-btn active" onclick="switchTab('quiz')">1. Làm Trắc Nghiệm</button>
+    <button class="nav-btn" onclick="switchTab('flashcard')">2. Học Flashcard</button>
+    <button class="nav-btn" onclick="switchTab('vocab')">3. Danh Sách Từ</button>
+    <button class="nav-btn" onclick="switchTab('stats')">4. Thống Kê</button>
+</nav>
+
+<div class="container">
+    <!-- TAB 1: TRẮC NGHIỆM -->
+    <div id="tab-quiz" class="tab-content active">
+        <div id="quiz-container"></div>
+        <button class="btn-submit" onclick="gradeQuiz()">Nộp Bài & Chấm Điểm</button>
+    </div>
+
+    <!-- TAB 2: FLASHCARD -->
+    <div id="tab-flashcard" class="tab-content">
+        <div class="card" style="text-align: center; color: var(--text-muted); margin-bottom: 1rem; font-size: 0.95rem;">
+            💡 Phương pháp <b>Active Recall</b>: Nhìn Kanji, tự nhẩm cách đọc & nghĩa rồi bấm vào thẻ để kiểm tra đáp án.
+        </div>
+        <div class="flashcard" id="flashcard" onclick="this.classList.toggle('flipped')">
+            <div class="flashcard-inner">
+                <div class="fc-front">
+                    <h2 id="fc-kanji" style="font-size: 3.2rem; color: var(--primary); font-weight: 700;"></h2>
+                    <p style="color: var(--text-muted); margin-top: 1rem; font-size: 0.9rem;">(Bấm thẻ để lật)</p>
+                </div>
+                <div class="fc-back">
+                    <h3 id="fc-hiragana" style="font-size: 2rem; color: var(--text); font-weight: 700;"></h3>
+                    <p id="fc-type" class="badge" style="margin: 0.6rem 0;"></p>
+                    <p id="fc-meaning" style="font-size: 1.2rem; font-weight: 600; color: #334155;"></p>
+                </div>
+            </div>
+        </div>
+        <div class="fc-controls">
+            <button class="fc-btn" onclick="prevCard()">← Từ trước</button>
+            <button class="fc-btn" onclick="nextCard()">Từ tiếp →</button>
+        </div>
+    </div>
+
+    <!-- TAB 3: DANH SÁCH TỪ VỰNG -->
+    <div id="tab-vocab" class="tab-content">
+        <div class="card">
+            <div class="vocab-toolbar">
+                <span style="font-weight: 700;" id="vocab-lesson-title">Danh sách từ vựng bài học</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="toggle-meaning-chk" checked onchange="toggleMeanings()">
+                    <span>Hiện nghĩa Tiếng Việt</span>
+                </label>
+            </div>
+            <div id="vocab-list"></div>
+        </div>
+    </div>
+
+    <!-- TAB 4: THỐNG KÊ -->
+    <div id="tab-stats" class="tab-content">
+        <div class="stat-grid">
+            <div class="stat-card">
+                <div class="stat-number" id="stat-quiz-score">--/--</div>
+                <div style="font-weight: 600; color: var(--text-muted);">Điểm trắc nghiệm mới nhất</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="stat-learned-count">0/--</div>
+                <div style="font-weight: 600; color: var(--text-muted);">Từ vựng đã thuộc</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="stat-progress">0%</div>
+                <div style="font-weight: 600; color: var(--text-muted);">Tiến độ thuộc bài</div>
+                <div class="progress-bar-bg">
+                    <div class="progress-bar-fill" id="stat-progress-bar"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Nút Xuất File JSON -->
+<button onclick="exportProgressJSON()" class="btn">💾 Tải về file tiến độ (.json)</button>
+
+<!-- Nút Nhập File JSON -->
+<input type="file" id="import-progress-file" accept=".json" style="display: none;" onchange="importProgressJSON(event)">
+<button onclick="document.getElementById('import-progress-file').click()" class="btn">📂 Nạp tiến độ từ file (.json)</button>
+<!-- Nạp dữ liệu các bài học trước -->
+<script src="lesson1.js"></script>
+<script src="lesson2.js"></script>
+
+<!-- Nạp script xử lý chính -->
+<script src="script.js"></script>
+</body>
+</html>
