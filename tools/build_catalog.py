@@ -3,7 +3,7 @@ import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-IGNORED = {".git", "css", "js", "tools", "icons", "node_modules", "__pycache__"}
+IGNORED = {".git", ".github", "_site", "css", "js", "tools", "icons", "node_modules", "__pycache__"}
 
 catalog = []
 for curriculum_dir in sorted(ROOT.iterdir(), key=lambda path: (path.name.casefold() != "tettei", path.name.casefold())):
