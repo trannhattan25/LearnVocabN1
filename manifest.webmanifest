@@ -1,0 +1,15 @@
+{
+  "id": "./",
+  "name": "LearnVocab JLPT",
+  "short_name": "LearnVocab",
+  "description": "Ôn từ vựng JLPT bằng trắc nghiệm và flashcard.",
+  "lang": "vi",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#4f46e5",
+  "icons": [
+    { "src": "icons/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

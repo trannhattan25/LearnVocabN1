@@ -1,5 +1,5 @@
 // --- QUẢN LÝ ĐA BÀI HỌC & INTERACTION LOGIC ---
-let currentLessonKey = 'lesson1';
+let currentLessonKey = window.DEFAULT_LESSON_KEY || 'lesson1';
 let data = [];
 let learnedStatus = [];
 let userAnswers = {};
@@ -21,6 +21,7 @@ function populateLessonSelector() {
     select.innerHTML = '';
     
     if (window.LESSONS) {
+        const groups = new Map();
         Object.keys(window.LESSONS).forEach(key => {
             const lesson = window.LESSONS[key];
             const totalQuestions = lesson.data ? lesson.data.length : 0;
@@ -31,6 +32,14 @@ function populateLessonSelector() {
             const learnedCount = lessonLearned.filter(Boolean).length;
             const percent = totalQuestions ? Math.round((learnedCount / totalQuestions) * 100) : 0;
 
+            const groupName = lesson.curriculumLabel || lesson.curriculum || 'Giáo trình';
+            if (!groups.has(groupName)) {
+                const group = document.createElement('optgroup');
+                group.label = groupName;
+                groups.set(groupName, group);
+                select.appendChild(group);
+            }
+
             const opt = document.createElement('option');
             opt.value = key;
             // Hiển thị dạng: "Bài 1: Kanji & Từ vựng | Tiến độ thuộc bài: 8/12 (67%)"
@@ -39,7 +48,7 @@ function populateLessonSelector() {
             if (key === currentLessonKey) {
                 opt.selected = true;
             }
-            select.appendChild(opt);
+            groups.get(groupName).appendChild(opt);
         });
     }
 }

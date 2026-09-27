@@ -1,0 +1,26 @@
+[
+  {
+    "path": "tettei/lesson1.js",
+    "name": "lesson1.js",
+    "curriculum": "tettei",
+    "curriculumLabel": "Tettei"
+  },
+  {
+    "path": "tettei/lesson2.js",
+    "name": "lesson2.js",
+    "curriculum": "tettei",
+    "curriculumLabel": "Tettei"
+  },
+  {
+    "path": "mimi/lesson1.js",
+    "name": "lesson1.js",
+    "curriculum": "mimi",
+    "curriculumLabel": "Mimi"
+  },
+  {
+    "path": "mimi/lesson2.js",
+    "name": "lesson2.js",
+    "curriculum": "mimi",
+    "curriculumLabel": "Mimi"
+  }
+]
